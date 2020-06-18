@@ -1,0 +1,12 @@
+There will be two types of input used in this project:
+1. it will be the video or live stream where you want to detect the object.
+2. second will be the sample image of the same place were you want to detect the object given the image should be without any object just the permanet background.
+
+Depending upon the specific path or area where you want the detect the object in the video some cutting or alteration of the area where the detection will be done apart from the whole area in the video can be done.
+
+
+To get the input image of just the permanent background from the whole stream of video, we need to convert the video to frames so that we could choose our desired image in which no object is in between just the backgound
+
+
+Both the inputs are needed to be feed in same way because this code runs on the principle of background detection.
+We take an empty backgound image and compare it with our video input to detect the difference which is nothing but our objects to be detected.
