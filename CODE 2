@@ -1,0 +1,80 @@
+import cv2
+import numpy as np
+%matplotlib inline
+from matplotlib import pyplot as plt
+
+pathfile =r'INPUT IMAGE'
+
+#---------------------------------
+# Load image
+#---------------------------------
+img_original = cv2.imread(pathfile)
+cv2.imshow('original', img_original)
+
+#---------------------------------
+# Draw Markers + Get width and Height  + Break into 10 rows and columns
+#---------------------------------
+
+width = 1900 
+height =1900
+# draw for every 50 
+
+
+# Draw columns at 50 intervals, width step at 50, height from 0 to 576
+col_interval=50
+for i in range (0,width,col_interval):
+    cv2.line(img_original,(i,0),(i,height),(255,255,0),2)
+    #cv2.putText(img_original,'%s'%(i), (i,col_interval/2),cv2.FONT_HERSHEY_SIMPLEX, 0.3, (0,0,0),thickness=1) #0.6 is the fontScale
+cv2.imshow('markers_col',img_original)
+
+#Draw rows at 50 interval
+row_interval=50
+
+for i in range(0,height,row_interval):
+    cv2.line(img_original,(0,i),(width,i),(255,255,0),2)
+    #cv2.putText(img_original,'%s'%(i), (row_interval/2,i),cv2.FONT_HERSHEY_SIMPLEX, 0.3, (0,0,0),thickness=1) #0.6 is the fontScale
+   
+cv2.imshow('markers_col_row',img_original)
+
+
+#---------------------------------
+# Manually read the grid and park down the x, y of the area of interest + Draw the polygon to confirm the mask location
+#---------------------------------
+
+#First mask - which is whole image black
+mask = np.zeros(img_original.shape[:2], dtype = "uint8") # (576, 720, 3), take (576,720) same height and width as the image
+cv2.imshow('mask',mask) 
+
+
+pts = np.array([[1600,1100],[950,1100],[700,100]], np.int32) #Set these parameters according to your area of detection 
+#pts = np.array([[280,80],[0,300],[0,500],[900,500],[700,80]], np.int32)
+#Docstring:   polylines(img, pts, isClosed, color[, thickness[, lineType[, shift]]]) -> None
+cv2.polylines(img_original,[pts],True,(255,0,0),thickness=2)
+cv2.imshow('AreaOfInterest',img_original)
+
+print("Area of Interest :\n", pts)
+
+# Mask + white (255) + infill at '1'
+#Docstring:   fillPoly(img, pts, color[, lineType[, shift[, offset]]]) -> None
+cv2.fillPoly(mask,[pts],255,1)
+cv2.imshow('Masked',mask)
+
+# Bitwise + mask
+#Docstring:   bitwise_and(src1, src2[, dst[, mask]]) -> dst
+masked = cv2.bitwise_and(img_original, img_original, mask = mask) # color, "mask" command show only the area of the rectangle
+cv2.imshow('MaskedImg', masked)
+
+
+
+#---------------------------------
+# Show all images in Matplotlib
+#---------------------------------
+
+
+plt.figure(figsize=(20,20)) # control size ; width and height in inches
+plt.subplot(231), plt.imshow(img_original), plt.title('Original'),plt.xticks([]), plt.yticks([])
+plt.subplot(232), plt.imshow(masked), plt.title('MaskedImg'),plt.xticks([]), plt.yticks([])
+
+
+cv2.waitKey(0)
+cv2.destroyAllWindows()
