@@ -1,0 +1,61 @@
+import cv2
+import pandas as pd
+import smtplib
+
+file_path =r'INPUT VIDEO'
+
+#USE 0 INSTEAD OF file_path TO USE WEBCAM
+cap = cv2.VideoCapture(file_path)
+
+
+
+counter=0
+while (cap.isOpened()):
+    # read the frame ; 
+    #Docstring:   read([, image]) -> retval, image
+    ret, frame = cap.read()
+    
+    
+    # have to check, else error on the last frame.
+    if ret==0:
+        break
+    
+    #Create a string FrameNo ; store all the frames in C\Frames
+    FrameNo = 'C:/wabcoframes/'+'FrameNo'+str(counter)+'.png'
+    #Save the frames
+    cv2.imwrite(FrameNo,frame)
+    
+    
+    counter = counter + 1
+    
+    #show the frame
+    #Docstring:   imshow(winname, mat) -> None
+    cv2.imshow('Window',frame)
+    
+    #control, press 'q' key to exit
+    # Min cv2.waitKey(integer = min at 1) ; video will be fast ; increase integer value to slow the video    
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+#print video statistics ; before release of cap ; else no value
+print("Frame Count   : ", cap.get(cv2.CAP_PROP_FRAME_COUNT))
+print("Format        : ", cap.get(cv2.CAP_PROP_FORMAT))
+print("Height        : ", cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+print("Width         : ", cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+print("Mode          : ", cap.get(cv2.CAP_PROP_MODE))
+print("Brightness    : ", cap.get(cv2.CAP_PROP_BRIGHTNESS))
+print("Fourcc        : ", cap.get(cv2.CAP_PROP_FOURCC))
+print("Contrast      : ", cap.get(cv2.CAP_PROP_CONTRAST))
+print("FrameperSec   : ", cap.get(cv2.CAP_PROP_FPS))
+
+#Get duration of the video
+FrameCount = cap.get(cv2.CAP_PROP_FRAME_COUNT)
+FrameperSecond =cap.get(cv2.CAP_PROP_FPS)
+DurationSecond = FrameCount/FrameperSecond
+if FrameperSecond>0:
+    print("FrameDuration : ", DurationSecond, "seconds")
+
+
+#when everything is done, release cap
+cap.release()
+cv2.destroyAllWindows()
